@@ -2,9 +2,8 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { collection, doc, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
-import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 
 import {
@@ -22,7 +21,7 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     primary: {
-      light: "#676fgd",
+      light: "#676f8d", // Corrected color
       main: "#424769",
       dark: "#2d3250",
       contrastText: "#ffffff",
@@ -39,12 +38,12 @@ const theme = createTheme({
 export default function Flashcard() {
   const { isLoaded, isSignedIn, user } = useUser();
   const [flashcards, setFlashcards] = useState([]);
-  const [flipped, setFlipped] = useState([]);
-  const [matched, setMatched] = useState([]);
+  const [flipped, setFlipped] = useState({});
+  const [matched, setMatched] = useState({});
   const [matchMode, setMatchMode] = useState(false);
-  const [highlighted, setHighlighted] = useState([]);
-  const [hidden, setHidden] = useState([]);
-  const [red, setRed] = useState([]);
+  const [highlighted, setHighlighted] = useState({});
+  const [hidden, setHidden] = useState({});
+  const [red, setRed] = useState({});
 
   const searchParams = useSearchParams();
   const search = searchParams.get("id");
@@ -74,7 +73,6 @@ export default function Flashcard() {
     getFlashcard();
   }, [user, search, matchMode]);
 
-  // Create a function that shuffles the flashcards
   const shuffleFlashcards = (flashcards) => {
     const array = [...flashcards];
     let currentIndex = array.length;
@@ -116,7 +114,6 @@ export default function Flashcard() {
       const [first] = highlightedIds;
       const second = id;
 
-      // Check if the highlighted cards match
       if (
         flashcards[first].type !== flashcards[second].type &&
         flashcards[first].front === flashcards[second].front
@@ -126,7 +123,6 @@ export default function Flashcard() {
           [first]: true,
           [second]: true,
         }));
-        // Hide the matched cards
         setHidden((prev) => ({
           ...prev,
           [first]: true,
@@ -135,19 +131,16 @@ export default function Flashcard() {
 
         setHighlighted({});
 
-        // Check if all cards are matched
         if (Object.keys(matched).length + 2 === flashcards.length) {
-          // Reset all matches and show all cards
           setTimeout(() => {
-            setRed([]);
-            setMatched([]);
-            setHidden([]);
-            setHighlighted([]);
+            setRed({});
+            setMatched({});
+            setHidden({});
+            setHighlighted({});
             setFlashcards(shuffleFlashcards(flashcards));
           }, 1000);
         }
       } else {
-        // Unhighlight both cards if they don't match
         setRed((prev) => ({
           ...prev,
           [first]: true,
@@ -155,7 +148,7 @@ export default function Flashcard() {
         }));
 
         setTimeout(() => {
-          setRed([]);
+          setRed({});
           setHighlighted({
             [first]: false,
             [second]: false,
@@ -163,10 +156,9 @@ export default function Flashcard() {
         }, 500);
       }
     } else {
-      // Highlight the clicked card
       setHighlighted((prev) => ({
         ...prev,
-        [id]: !prev[id],
+        [id]: true,
       }));
     }
   };
@@ -250,13 +242,10 @@ export default function Flashcard() {
           ))}
         </Grid>
         <Button
-          onClick={() => toggleMatchMode()}
+          onClick={toggleMatchMode}
           sx={{
             mt: 2,
             mr: 2,
-            position: "flex",
-            alignContent: "center",
-            alignItems: "center",
             textAlign: "center",
             backgroundColor: theme.palette.secondary.contrastText,
             color: theme.palette.primary.main,
@@ -272,9 +261,6 @@ export default function Flashcard() {
           onClick={() => setFlashcards(shuffleFlashcards(flashcards))}
           sx={{
             mt: 2,
-            position: "flex",
-            alignContent: "center",
-            alignItems: "center",
             textAlign: "center",
             backgroundColor: theme.palette.secondary.contrastText,
             color: theme.palette.primary.main,
@@ -359,9 +345,6 @@ export default function Flashcard() {
         href="/flashcards"
         sx={{
           mt: 2,
-          position: "flex",
-          alignContent: "center",
-          alignItems: "center",
           textAlign: "center",
           backgroundColor: theme.palette.secondary.contrastText,
           color: theme.palette.primary.main,
@@ -379,9 +362,6 @@ export default function Flashcard() {
         sx={{
           mt: 2,
           ml: 2,
-          position: "flex",
-          alignContent: "center",
-          alignItems: "center",
           textAlign: "center",
           backgroundColor: theme.palette.secondary.contrastText,
           color: theme.palette.primary.main,

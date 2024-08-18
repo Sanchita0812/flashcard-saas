@@ -1,13 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["class"],
+  darkMode: ["class"], // Enable dark mode with the 'class' strategy
   content: [
-    './pages/**/*.{ts,tsx}',
+    './pages/**/*.{ts,tsx}', // Ensure paths are correct for your project structure
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
-  prefix: "",
   theme: {
     container: {
       center: true,
