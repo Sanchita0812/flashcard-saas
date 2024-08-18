@@ -1,4 +1,5 @@
-// pages/index.js or pages/index.tsx
+'use client';
+
 import './globals.css';
 import Logo from '../public/assets/logo.png';
 import SmallLogo from '../public/assets/SmallHomeScreenLogo.png';
@@ -10,10 +11,10 @@ import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { Box, AppBar, Button, Container, Toolbar, Typography, Grid } from '@mui/material';
 import Head from 'next/head';
 import Link from 'next/link';
-
-import { createTheme } from '@mui/material/styles';
 import { CardStack } from '@/components/ui/card-stack';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+// Create theme directly here, assuming this is a client component
 const theme = createTheme({
   palette: {
     primary: {
