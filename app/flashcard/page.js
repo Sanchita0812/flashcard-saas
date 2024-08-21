@@ -18,10 +18,11 @@ import {
 } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 
+// Custom theme for MUI components
 const theme = createTheme({
   palette: {
     primary: {
-      light: "#676f8d", // Corrected color
+      light: "#676f8d",
       main: "#424769",
       dark: "#2d3250",
       contrastText: "#ffffff",
@@ -49,45 +50,40 @@ export default function Flashcard() {
   const search = searchParams.get("id");
 
   useEffect(() => {
-    async function getFlashcard() {
+    const getFlashcards = async () => {
       if (!search || !user) return;
+
       const colRef = collection(doc(db, "users", user.id), search);
       const docSnap = await getDocs(colRef);
-      let flashcards = [];
-
-      docSnap.forEach((doc) => {
-        flashcards.push({ id: doc.id, ...doc.data() });
-      });
+      const fetchedFlashcards = docSnap.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
       if (matchMode) {
-        const doubleCards = flashcards.flatMap((flashcard) => [
+        const doubledCards = fetchedFlashcards.flatMap((flashcard) => [
           { ...flashcard, type: "front" },
           { ...flashcard, type: "back" },
         ]);
-        setFlashcards(shuffleFlashcards(doubleCards));
+        setFlashcards(shuffleFlashcards(doubledCards));
       } else {
-        setFlashcards(flashcards);
+        setFlashcards(fetchedFlashcards);
       }
-    }
+    };
 
-    getFlashcard();
+    getFlashcards();
   }, [user, search, matchMode]);
 
   const shuffleFlashcards = (flashcards) => {
-    const array = [...flashcards];
-    let currentIndex = array.length;
-
-    while (currentIndex !== 0) {
-      let randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex],
-        array[currentIndex],
+    const shuffledArray = [...flashcards];
+    for (let i = shuffledArray.length - 1; i > 0; i--) {
+      const randomIndex = Math.floor(Math.random() * (i + 1));
+      [shuffledArray[i], shuffledArray[randomIndex]] = [
+        shuffledArray[randomIndex],
+        shuffledArray[i],
       ];
     }
-
-    return array;
+    return shuffledArray;
   };
 
   const handleCardClick = (id) => {
@@ -111,7 +107,7 @@ export default function Flashcard() {
     );
 
     if (highlightedIds.length === 1) {
-      const [first] = highlightedIds;
+      const first = highlightedIds[0];
       const second = id;
 
       if (
@@ -130,14 +126,9 @@ export default function Flashcard() {
         }));
 
         setHighlighted({});
-
         if (Object.keys(matched).length + 2 === flashcards.length) {
           setTimeout(() => {
-            setRed({});
-            setMatched({});
-            setHidden({});
-            setHighlighted({});
-            setFlashcards(shuffleFlashcards(flashcards));
+            resetGame();
           }, 1000);
         }
       } else {
@@ -163,89 +154,114 @@ export default function Flashcard() {
     }
   };
 
+  const resetGame = () => {
+    setRed({});
+    setMatched({});
+    setHidden({});
+    setHighlighted({});
+    setFlashcards(shuffleFlashcards(flashcards));
+  };
+
   const toggleMatchMode = () => {
     setMatchMode((prev) => !prev);
   };
 
   if (!isLoaded || !isSignedIn) {
-    return <></>;
+    return null;
   }
 
-  if (matchMode) {
-    return (
-      <Container>
-        <Typography
-          variant="h2"
-          component="h1"
-          sx={{ mt: 4, textAlign: "center", position: "relative" }}
-          gutterBottom
-        >
-          Match Flashcards
-        </Typography>
-        <Grid container spacing={3} sx={{ mt: 4 }}>
-          {flashcards.map((flashcard, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <Card
-                sx={{
-                  color: theme.palette.primary.main,
-                  borderColor: highlighted[index]
-                    ? theme.palette.secondary.light
-                    : "white",
-                  border: highlighted[index]
-                    ? `5px solid ${theme.palette.secondary.main}`
-                    : "none",
-                  transition: "background-color 0.3s, border 0.3s",
-                }}
+  return (
+    <Container maxWidth="lg">
+      <Typography
+        variant="h2"
+        component="h1"
+        sx={{ mt: 4, textAlign: "center", position: "relative" }}
+        gutterBottom
+      >
+        {matchMode ? "Match Flashcards" : "Generated Flashcard Preview"}
+      </Typography>
+      <Grid container spacing={3} sx={{ mt: 4 }}>
+        {flashcards.map((flashcard, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <Card
+              sx={{
+                color: theme.palette.primary.main,
+                borderColor: highlighted[index]
+                  ? theme.palette.secondary.light
+                  : "transparent",
+                borderWidth: highlighted[index] ? "5px" : "0px",
+                borderStyle: "solid",
+                transition: "border-color 0.3s",
+              }}
+            >
+              <CardActionArea
+                onClick={
+                  matchMode
+                    ? () => handleHighlightClick(index)
+                    : () => handleCardClick(index)
+                }
               >
-                <CardActionArea onClick={() => handleHighlightClick(index)}>
-                  <CardContent>
-                    <Box
-                      sx={{
-                        perspective: "1000px",
-                        "& > div": {
-                          position: "relative",
-                          width: "100%",
-                          height: "200px",
-                          boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
-                        },
-                        "& > div > div": {
-                          position: "absolute",
-                          width: "100%",
-                          height: "100%",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          padding: 2,
-                          boxSizing: "border-box",
-                          backgroundColor: hidden[index]
-                            ? "#90EE90"
-                            : red[index]
-                            ? "#FF6347"
-                            : "white",
-                        },
-                      }}
-                    >
-                      <div>
-                        <div>
-                          <Typography variant="h5" component="div">
-                            {flashcard.type === "front"
-                              ? flashcard.front
-                              : flashcard.back}
-                          </Typography>
-                        </div>
-                      </div>
-                    </Box>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+                <CardContent>
+                  <Box
+                    sx={{
+                      perspective: "1000px",
+                      "& > div": {
+                        position: "relative",
+                        width: "100%",
+                        height: "200px",
+                        boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
+                        transition: matchMode
+                          ? "background-color 0.3s, border 0.3s"
+                          : "transform 0.6s",
+                        transformStyle: "preserve-3d",
+                        transform: flipped[index] ? "rotateY(180deg)" : "rotateY(0deg)",
+                      },
+                      "& > div > div": {
+                        position: "absolute",
+                        width: "100%",
+                        height: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: 2,
+                        boxSizing: "border-box",
+                        backfaceVisibility: "hidden",
+                        backgroundColor: hidden[index]
+                          ? "#90EE90"
+                          : red[index]
+                          ? "#FF6347"
+                          : "white",
+                      },
+                      "& > div > div:nth-of-type(2)": {
+                        transform: "rotateY(180deg)",
+                      },
+                    }}
+                  >
+                    <div>
+                      <Typography variant="h5" component="div">
+                        {flashcard.type === "front"
+                          ? flashcard.front
+                          : flashcard.back}
+                      </Typography>
+                    </div>
+                    <div>
+                      <Typography variant="h5" component="div">
+                        {flashcard.type === "back"
+                          ? flashcard.back
+                          : flashcard.front}
+                      </Typography>
+                    </div>
+                  </Box>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
         <Button
           onClick={toggleMatchMode}
           sx={{
-            mt: 2,
-            mr: 2,
             textAlign: "center",
             backgroundColor: theme.palette.secondary.contrastText,
             color: theme.palette.primary.main,
@@ -253,14 +269,14 @@ export default function Flashcard() {
               backgroundColor: theme.palette.secondary.contrastText,
               color: theme.palette.primary.main,
             },
+            mr: 2,
           }}
         >
-          Back Page
+          {matchMode ? "Back to Preview" : "Match"}
         </Button>
         <Button
           onClick={() => setFlashcards(shuffleFlashcards(flashcards))}
           sx={{
-            mt: 2,
             textAlign: "center",
             backgroundColor: theme.palette.secondary.contrastText,
             color: theme.palette.primary.main,
@@ -272,107 +288,7 @@ export default function Flashcard() {
         >
           Shuffle
         </Button>
-      </Container>
-    );
-  }
-
-  return (
-    <Container maxWidth="100vw">
-      <Typography
-        variant="h2"
-        component="h1"
-        sx={{ mt: 4, textAlign: "center", position: "relative" }}
-        gutterBottom
-      >
-        Generated Flashcard Preview
-      </Typography>
-      <Grid container spacing={3} sx={{ mt: 4 }}>
-        {flashcards.map((flashcard, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
-            <Card sx={{ color: theme.palette.primary.main }}>
-              <CardActionArea onClick={() => handleCardClick(index)}>
-                <CardContent>
-                  <Box
-                    sx={{
-                      perspective: "1000px",
-                      "& > div": {
-                        transition: "transform 0.6s",
-                        transformStyle: "preserve-3d",
-                        position: "relative",
-                        width: "100%",
-                        height: "200px",
-                        boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
-                        transform: flipped[index]
-                          ? "rotateY(180deg)"
-                          : "rotateY(0deg)",
-                      },
-                      "& > div > div": {
-                        position: "absolute",
-                        width: "100%",
-                        height: "100%",
-                        backfaceVisibility: "hidden",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding: 2,
-                        boxSizing: "border-box",
-                      },
-                      "& > div > div:nth-of-type(2)": {
-                        transform: "rotateY(180deg)",
-                      },
-                    }}
-                  >
-                    <div>
-                      <div>
-                        <Typography variant="h5" component="div">
-                          {flashcard.front}
-                        </Typography>
-                      </div>
-                      <div>
-                        <Typography variant="h5" component="div">
-                          {flashcard.back}
-                        </Typography>
-                      </div>
-                    </div>
-                  </Box>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-      <Button
-        href="/flashcards"
-        sx={{
-          mt: 2,
-          textAlign: "center",
-          backgroundColor: theme.palette.secondary.contrastText,
-          color: theme.palette.primary.main,
-          "&:hover": {
-            backgroundColor: theme.palette.secondary.contrastText,
-            color: theme.palette.primary.main,
-          },
-        }}
-      >
-        Back Page
-      </Button>
-      <Button
-        variant="contained"
-        onClick={() => setMatchMode(true)}
-        sx={{
-          mt: 2,
-          ml: 2,
-          textAlign: "center",
-          backgroundColor: theme.palette.secondary.contrastText,
-          color: theme.palette.primary.main,
-          "&:hover": {
-            backgroundColor: theme.palette.secondary.contrastText,
-            color: theme.palette.primary.main,
-          },
-        }}
-      >
-        Match
-      </Button>
+      </Box>
     </Container>
   );
 }

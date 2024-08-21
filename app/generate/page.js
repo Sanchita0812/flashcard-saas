@@ -18,13 +18,13 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
-  DialogActions
+  DialogActions,
 } from '@mui/material';
 import { useUser, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import Image from 'next/image';
 import { db } from '@/firebase';
 import { doc, collection, setDoc, getDoc, writeBatch } from 'firebase/firestore';
-import { createTheme } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import SmallLogo from '../../public/assets/SmallHomeScreenLogo.png';
 
@@ -43,6 +43,9 @@ const theme = createTheme({
       contrastText: '#F8C19B',
     },
   },
+  typography: {
+    fontFamily: 'Roboto, Arial, sans-serif',
+  },
 });
 
 export default function Generate() {
@@ -56,7 +59,11 @@ export default function Generate() {
 
   if (isLoading) {
     return (
-      <Typography variant="h5" my={50} sx={{ position: 'relative', textAlign: 'center', color: theme.palette.primary.contrastText }}>
+      <Typography
+        variant="h5"
+        my={50}
+        sx={{ position: 'relative', textAlign: 'center', color: theme.palette.primary.contrastText }}
+      >
         Loading...
       </Typography>
     );
@@ -64,15 +71,19 @@ export default function Generate() {
 
   if (!isSignedIn) {
     return (
-      <Container maxWidth="100vw" sx={{ backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText }}>
+      <Container maxWidth="100vw" sx={{ backgroundColor: theme.palette.primary.main }}>
         <AppBar position="static" sx={{ backgroundColor: theme.palette.primary.dark }}>
           <Toolbar>
             <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              <Image src={SmallLogo} alt="Flasher.io Logo" width={25} />
+              <Image src={SmallLogo} alt="Flasher.io Logo" width={25} height={25} />
             </Typography>
             <SignedOut>
-              <Button color="inherit" href="/sign-in" sx={{ color: theme.palette.primary.contrastText }}>Login</Button>
-              <Button color="inherit" href="/sign-up" sx={{ color: theme.palette.primary.contrastText }}>Sign Up</Button>
+              <Button color="inherit" href="/sign-in" sx={{ color: theme.palette.primary.contrastText }}>
+                Login
+              </Button>
+              <Button color="inherit" href="/sign-up" sx={{ color: theme.palette.primary.contrastText }}>
+                Sign Up
+              </Button>
             </SignedOut>
             <SignedIn>
               <UserButton />
@@ -165,67 +176,23 @@ export default function Generate() {
   };
 
   return (
-    <Container maxWidth="100vw">
-      <AppBar position="static" sx={{ backgroundColor: theme.palette.primary.dark, color: theme.palette.primary.contrastText }}>
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            <Image src={SmallLogo} alt="Flasher.io Logo" width={25} />
-          </Typography>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-        </Toolbar>
-      </AppBar>
+    <ThemeProvider theme={theme}>
+      <Container maxWidth="100vw" sx={{ backgroundColor: theme.palette.primary.main }}>
+        <AppBar position="static" sx={{ backgroundColor: theme.palette.primary.dark }}>
+          <Toolbar>
+            <Typography variant="h6" sx={{ flexGrow: 1 }}>
+              <Image src={SmallLogo} alt="Flasher.io Logo" width={25} height={25} />
+            </Typography>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </Toolbar>
+        </AppBar>
 
-      <Button
-        href="/"
-        sx={{
-          mt: 2,
-          backgroundColor: theme.palette.secondary.contrastText,
-          color: theme.palette.primary.main,
-          '&:hover': {
-            backgroundColor: theme.palette.secondary.contrastText,
-            color: theme.palette.primary.main,
-          },
-        }}
-      >
-        Back Page
-      </Button>
-      <Button
-        href="/flashcards"
-        sx={{
-          mt: 2,
-          position: 'absolute',
-          right: 25,
-          backgroundColor: theme.palette.secondary.contrastText,
-          color: theme.palette.primary.main,
-          '&:hover': {
-            backgroundColor: theme.palette.secondary.contrastText,
-            color: theme.palette.primary.main,
-          },
-        }}
-      >
-        View Flashcard Sets
-      </Button>
-
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h3" component="h1" my={10} gutterBottom sx={{ color: theme.palette.primary.contrastText, textAlign: 'center' }}>
-          Generate Flashcards
-        </Typography>
-        <TextField
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          label="Enter text"
-          fullWidth
-          multiline
-          rows={6}
-          variant="outlined"
-          sx={{ mb: 2, backgroundColor: theme.palette.primary.contrastText, color: theme.palette.primary.contrastText }}
-        />
         <Button
-          variant="contained"
-          color="primary"
+          href="/"
           sx={{
+            mt: 2,
             backgroundColor: theme.palette.secondary.contrastText,
             color: theme.palette.primary.main,
             '&:hover': {
@@ -233,118 +200,182 @@ export default function Generate() {
               color: theme.palette.primary.main,
             },
           }}
-          onClick={handleSubmit}
-          fullWidth
         >
-          Submit
+          Back Page
         </Button>
-      </Box>
-
-      {flashcards.length > 0 && (
-        <Box sx={{ mt: 4 }}>
-          <Typography variant="h5" component="h2" gutterBottom>Generated Flashcard Preview</Typography>
-          <Grid container spacing={2}>
-            {flashcards.map((flashcard, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Card>
-                  <CardActionArea onClick={() => handleCardClick(index)}>
-                    <CardContent>
-                      <Box
-                        sx={{
-                          perspective: '1000px',
-                          '& > div': {
-                            transition: 'transform 0.6s',
-                            transformStyle: 'preserve-3d',
-                            position: 'relative',
-                            width: '100%',
-                            height: '200px',
-                            boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-                            transform: flipped[index] ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                          },
-                          '& > div > div': {
-                            position: 'absolute',
-                            width: '100%',
-                            height: '100%',
-                            backfaceVisibility: 'hidden',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            padding: '16px',
-                            boxSizing: 'border-box',
-                          },
-                          '& > div > div.back': {
-                            transform: 'rotateY(180deg)',
-                            backgroundColor: theme.palette.primary.light,
-                          },
-                        }}
-                      >
-                        <div>
-                          <div>{flashcard.front}</div>
-                          <div className="back">{flashcard.back}</div>
-                        </div>
-                      </Box>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      )}
-
-      <Button
-        variant="contained"
-        onClick={handleRefresh}
-        sx={{
-          mt: 2,
-          backgroundColor: theme.palette.secondary.contrastText,
-          color: theme.palette.primary.main,
-          '&:hover': {
+        <Button
+          href="/flashcards"
+          sx={{
+            mt: 2,
+            position: 'absolute',
+            right: 25,
             backgroundColor: theme.palette.secondary.contrastText,
             color: theme.palette.primary.main,
-          },
-        }}
-      >
-        Refresh Flashcards
-      </Button>
+            '&:hover': {
+              backgroundColor: theme.palette.secondary.contrastText,
+              color: theme.palette.primary.main,
+            },
+          }}
+        >
+          View Flashcard Sets
+        </Button>
 
-      <Button
-        variant="contained"
-        onClick={handleOpen}
-        sx={{
-          mt: 2,
-          backgroundColor: theme.palette.secondary.contrastText,
-          color: theme.palette.primary.main,
-          '&:hover': {
-            backgroundColor: theme.palette.secondary.contrastText,
-            color: theme.palette.primary.main,
-          },
-        }}
-      >
-        Save Flashcards
-      </Button>
-
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Save Flashcards</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Please enter a name for your flashcard set.
-          </DialogContentText>
+        <Box sx={{ my: 4 }}>
+          <Typography
+            variant="h3"
+            component="h1"
+            my={10}
+            gutterBottom
+            sx={{ color: theme.palette.primary.contrastText, textAlign: 'center' }}
+          >
+            Generate Flashcards
+          </Typography>
           <TextField
-            autoFocus
-            margin="dense"
-            label="Name"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            label="Enter text"
             fullWidth
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            variant="standard"
+            multiline
+            rows={6}
+            variant="outlined"
+            sx={{
+              mb: 2,
+              backgroundColor: theme.palette.primary.contrastText,
+              color: theme.palette.primary.contrastText,
+            }}
           />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={saveFlashcards}>Save</Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{
+              backgroundColor: theme.palette.secondary.contrastText,
+              color: theme.palette.primary.main,
+              '&:hover': {
+                backgroundColor: theme.palette.secondary.contrastText,
+                color: theme.palette.primary.main,
+              },
+            }}
+            onClick={handleSubmit}
+            fullWidth
+          >
+            Submit
+          </Button>
+        </Box>
+
+        {flashcards.length > 0 && (
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="h5" component="h2" gutterBottom>
+              Generated Flashcard Preview
+            </Typography>
+            <Grid container spacing={2}>
+              {flashcards.map((flashcard, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <Card>
+                    <CardActionArea onClick={() => handleCardClick(index)}>
+                      <CardContent>
+                        <Box
+                          sx={{
+                            perspective: '1000px',
+                            '& > div': {
+                              transition: 'transform 0.6s',
+                              transformStyle: 'preserve-3d',
+                              position: 'relative',
+                              width: '100%',
+                              height: '200px',
+                              boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                              transform: flipped[index] ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                            },
+                            '& > div > div': {
+                              position: 'absolute',
+                              width: '100%',
+                              height: '100%',
+                              backfaceVisibility: 'hidden',
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              padding: '16px',
+                              boxSizing: 'border-box',
+                            },
+                            '& > div > div.back': {
+                              transform: 'rotateY(180deg)',
+                              backgroundColor: theme.palette.primary.light,
+                            },
+                          }}
+                        >
+                          <div>
+                            <div>{flashcard.front}</div>
+                            <div className="back">{flashcard.back}</div>
+                          
+                            <div>{flashcard.front}</div>
+                            <div className="back">{flashcard.back}</div>
+                          </div>
+                        </Box>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        )}
+
+        <Box sx={{ textAlign: 'center', mt: 4 }}>
+          <Button
+            variant="contained"
+            onClick={handleRefresh}
+            sx={{
+              mt: 2,
+              mr: 2,
+              backgroundColor: theme.palette.secondary.contrastText,
+              color: theme.palette.primary.main,
+              '&:hover': {
+                backgroundColor: theme.palette.secondary.contrastText,
+                color: theme.palette.primary.main,
+              },
+            }}
+          >
+            Refresh Flashcards
+          </Button>
+
+          <Button
+            variant="contained"
+            onClick={handleOpen}
+            sx={{
+              mt: 2,
+              backgroundColor: theme.palette.secondary.contrastText,
+              color: theme.palette.primary.main,
+              '&:hover': {
+                backgroundColor: theme.palette.secondary.contrastText,
+                color: theme.palette.primary.main,
+              },
+            }}
+          >
+            Save Flashcards
+          </Button>
+        </Box>
+
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>Save Flashcards</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Please enter a name for your flashcard set.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Name"
+              fullWidth
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              variant="standard"
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={saveFlashcards}>Save</Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
+    </ThemeProvider>
   );
 }

@@ -1,7 +1,25 @@
+// {
+//   "compilerOptions": {
+//     "paths": {
+//       "@/*": ["./*"],
+//     }
+//   }
+// }
+
 {
   "compilerOptions": {
+    "jsx": "preserve", 
+    "allowJs": true,   
+    "checkJs": false,  
+    "baseUrl": "./",   
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"]    
     }
-  }
+  },
+  "exclude": [
+    "node_modules"     
+  ],
+  "include": [
+    "./**/*"   // This includes all files in the project directory and its subdirectories
+  ]
 }

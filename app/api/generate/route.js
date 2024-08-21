@@ -29,7 +29,7 @@ export async function POST(req) {
                 { role: "system", content: systemPrompt },
                 { role: "user", content: data },
             ],
-            model: "groq-model-id", // replace with the actual GROQ model ID
+            model: "llama3-8b-8192", // replace with the actual GROQ model ID
         });
 
         if (completion && completion.choices && completion.choices.length > 0) {
