@@ -1,22 +1,61 @@
 import React from 'react'
 import { Container, Box, Typography, AppBar, Toolbar, Button } from '@mui/material'
-import { SignIn } from '@clerk/nextjs'
+import { SignIn, SignUp } from '@clerk/nextjs'
 import Link from 'next/link'
+import { createTheme } from '@mui/material/styles';
+import Image from "next/image";
 
-export default function SignUpPage() {
-    
-<Box
-  display="flex"
-  flexDirection="column"
-  justifyContent="center"
-  alignItems="center"
-  sx={{textAlign: 'center', my: 4}}
->
-  <Typography variant="h4" component="h1" gutterBottom>
-    Sign In
-  </Typography>
-  <SignIn />
-</Box>
+import SmallLogo from '../../../public/assets/SmallHomeScreenLogo.png';
 
-  // ... (component body)
+const theme = createTheme({
+  palette: {
+    primary: {
+      light: '#676fgd',
+      main: '#424769',
+      dark: '#2d3250',
+      contrastText: '#ffffff',
+    },
+    secondary: {
+      light: '#AD81A7',
+      main: '#6C5E82',
+      dark: '#2E365A',
+      contrastText: '#F8C19B',
+    },
+  },
+});
+
+export default function SignInPage(){
+    return(
+    <Container maxWidth="100vw">
+        <AppBar position="static" sx={{backgroundColor: theme.palette.primary.dark, color: theme.palette.primary.contrastText}}>
+            <Toolbar>
+                <Typography variant="h6" sx={{flexGrow: 1}}>
+                    <Image src={SmallLogo} alt="Flasher.io Logo" width={25} sx={{textAlign: "center"}}/>
+                </Typography>
+                <Button color="inherit" sx={{color: theme.palette.primary.contrastText}}>
+                <Link href="/login" passHref/>
+                    Login
+                </Button>
+                <Button color="inherit" sx={{color: theme.palette.primary.contrastText}}>
+                <Link href="/sign-up" passHref/>
+                    Sign Up
+                </Button>
+            </Toolbar>
+        </AppBar>
+
+
+        <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            sx={{textAlign: 'center', my: 4}}
+            >
+            <Typography variant="h4" component="h1" gutterBottom>
+                Sign In
+            </Typography>
+            <SignIn />
+        </Box>
+    </Container>
+    );
 }
