@@ -1,11 +1,11 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Define custom properties for light and dark themes */
 :root {
-  --background: #ffffff; /* Example light background */
-  --foreground: #000000; /* Example light foreground */
+  --background: #ffffff; /* Light background */
+  --foreground: #000000; /* Light foreground */
   --card: #ffffff;
   --card-foreground: #000000;
   --popover: #ffffff;
@@ -32,8 +32,8 @@
 }
 
 .dark {
-  --background: #333333; /* Example dark background */
-  --foreground: #ffffff; /* Example dark foreground */
+  --background: #333333; /* Dark background */
+  --foreground: #ffffff; /* Dark foreground */
   --card: #333333;
   --card-foreground: #ffffff;
   --popover: #333333;
@@ -67,4 +67,25 @@ html, body {
 
 * {
   border-color: var(--border);
+  border-radius: var(--radius);
 }
+
+/* Optional: Ensure dark mode is applied correctly */
+body.dark {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Ensure card, popover, etc. use the correct variables */
+.card, .popover, .input {
+  background-color: var(--card);
+  color: var(--card-foreground);
+  border-radius: var(--radius);
+}
+
+/* Example usage for chart colors */
+.chart-1 { background-color: var(--chart-1); }
+.chart-2 { background-color: var(--chart-2); }
+.chart-3 { background-color: var(--chart-3); }
+.chart-4 { background-color: var(--chart-4); }
+.chart-5 { background-color: var(--chart-5); }

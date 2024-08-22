@@ -1,11 +1,3 @@
-// {
-//   "compilerOptions": {
-//     "paths": {
-//       "@/*": ["./*"],
-//     }
-//   }
-// }
-
 {
   "compilerOptions": {
     "jsx": "preserve", 
@@ -13,13 +5,14 @@
     "checkJs": false,  
     "baseUrl": "./",   
     "paths": {
-      "@/*": ["./*"]    
+      "@/*": ["./*"]
     }
   },
   "exclude": [
     "node_modules"     
   ],
   "include": [
-    "./**/*"   // This includes all files in the project directory and its subdirectories
+    "src/**/*",   // Adjust to your source folder if it's not 'src'
+    "components/**/*" // Ensure this includes relevant directories
   ]
 }

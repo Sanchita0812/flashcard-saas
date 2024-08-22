@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
+import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -9,11 +9,28 @@ export const metadata = {
   description: "Flashcard SaaS with OpenAI and Stripe",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout() {
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={inter.className}>{children}</body>
+        <head>
+          <title>{metadata.title}</title>
+          <meta name="description" content={metadata.description} />
+        </head>
+        <body className={inter.className}>
+          <header>
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </header>
+          <main>
+            <h1>Welcome to Flasher.io</h1>
+            <p>This is your flashcard SaaS powered by OpenAI and Stripe.</p>
+          </main>
+        </body>
       </html>
     </ClerkProvider>
   );
