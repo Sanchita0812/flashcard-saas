@@ -379,7 +379,7 @@ export default function Home() {
 
       <footer>
         <Typography variant="body1" align="center" width="100%" height="auto" fontSize={16} sx={{color: theme.palette.primary.light}}>
-          Sanchita, Vansh, Prince, & Leah © 2024 Flasher.io. All rights reserved.
+          Sanchita, Vansh, Prince, & Leah © 2024 StudyFlash. All rights reserved.
         </Typography>
       </footer>
     </Container>

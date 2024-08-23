@@ -9,13 +9,15 @@ export const metadata = {
   description: "Flashcard SaaS with OpenAI and Stripe",
 };
 
-export default function RootLayout() {
+export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
         <head>
           <title>{metadata.title}</title>
           <meta name="description" content={metadata.description} />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta charSet="UTF-8" />
         </head>
         <body className={inter.className}>
           <header>
@@ -26,9 +28,8 @@ export default function RootLayout() {
               <UserButton />
             </SignedIn>
           </header>
-          <main>
-            <h1>Welcome to Flasher.io</h1>
-            <p>This is your flashcard SaaS powered by OpenAI and Stripe.</p>
+          <main aria-label="Main Content">
+            {children}
           </main>
         </body>
       </html>
