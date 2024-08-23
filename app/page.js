@@ -33,9 +33,9 @@ const theme = createTheme({
 
 export default function Home() {
   const cards = [
-    { id: 1, name: "Masters of Business Administration Student", designation: "IITG", content: "Flasher.io has been a game-changer for my study sessions. The intuitive AI-driven flashcards make learning complex topics much easier and more engaging. I love how I can customize the flashcards to fit my specific research needs." },
-    { id: 2, name: "Computer Science Student", designation: "University of Toronto", content: "Flasher.io's flashcard tool is incredibly effective. It not only helps me review key concepts but also adapt the content based on my progress. It's become an essential part of my study routine, and the AI features make it stand out from other tools." },
-    { id: 3, name: "Electrical Engineering Student", designation: "National University of Singapore", content: "As a student with a busy schedule, Flasher.io has been a lifesaver. The ability to create and manage flashcards easily and the intelligent suggestions for improving my study materials are invaluable. Highly recommended for anyone looking to enhance their learning efficiency!" },
+    { id: 1, name: "Masters of Business Administration Student", designation: "IITG", content: "StudyFlash has been a game-changer for my study sessions. The intuitive AI-driven flashcards make learning complex topics much easier and more engaging. I love how I can customize the flashcards to fit my specific research needs." },
+    { id: 2, name: "Computer Science Student", designation: "University of Toronto", content: "StudyFlash's flashcard tool is incredibly effective. It not only helps me review key concepts but also adapt the content based on my progress. It's become an essential part of my study routine, and the AI features make it stand out from other tools." },
+    { id: 3, name: "Electrical Engineering Student", designation: "National University of Singapore", content: "As a student with a busy schedule, StudyFlash has been a lifesaver. The ability to create and manage flashcards easily and the intelligent suggestions for improving my study materials are invaluable. Highly recommended for anyone looking to enhance their learning efficiency!" },
   ];
 
   const handleSubmit = async () => {
@@ -70,14 +70,14 @@ export default function Home() {
   return (
     <Container maxWidth="100vw" sx={{backgroundColor: theme.palette.primary.main, color:theme.palette.primary.contrastText}}>
       <Head>
-        <title>Flasher.io</title>
+        <title>StudyFlash</title>
         <meta name="description" content="Create Flashcard from your text" />
       </Head>
 
       <AppBar position="static" sx={{backgroundColor: theme.palette.primary.dark, color:theme.palette.primary.contrastText, borderRadius: 2}}>
         <Toolbar>
           <Typography variant="h6" style={{flexGrow: 1}} sx={{color:theme.palette.primary.contrastText}}>
-            <Image src={SmallLogo} alt="Flasher.io Logo" width={25} />
+            <Image src={SmallLogo} alt="StudyFlash Logo" width={25} />
           </Typography>
           <SignedOut>
             <Button color="inherit" href="sign-in" sx={{color: theme.palette.primary.light}}> Login</Button>
@@ -98,7 +98,7 @@ export default function Home() {
           borderRadius: 2,
         }}
       >
-        <Image src={Logo} alt="Flasher.io Logo" width="300" height="120" style={{margin: "0 auto"}} />
+        <Image src={Logo} alt="StudyFlash Logo" width="300" height="120" style={{margin: "0 auto"}} />
 
         <Typography variant="h6" gutterBottom fontSize={14}>
           Make AI Flashcards from your custom input

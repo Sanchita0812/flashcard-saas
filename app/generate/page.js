@@ -75,7 +75,7 @@ export default function Generate() {
         <AppBar position="static" sx={{ backgroundColor: theme.palette.primary.dark }}>
           <Toolbar>
             <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              <Image src={SmallLogo} alt="Flasher.io Logo" width={25} height={25} />
+              <Image src={SmallLogo} alt="StudyFlash Logo" width={25} height={25} />
             </Typography>
             <SignedOut>
               <Button color="inherit" href="/sign-in" sx={{ color: theme.palette.primary.contrastText }}>
@@ -181,7 +181,7 @@ export default function Generate() {
         <AppBar position="static" sx={{ backgroundColor: theme.palette.primary.dark }}>
           <Toolbar>
             <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              <Image src={SmallLogo} alt="Flasher.io Logo" width={25} height={25} />
+              <Image src={SmallLogo} alt="StudyFlash Logo" width={25} height={25} />
             </Typography>
             <SignedIn>
               <UserButton />

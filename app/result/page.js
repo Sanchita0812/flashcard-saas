@@ -80,7 +80,7 @@ const ResultPage = () => {
           <Box sx={{ mt: 2 }}>
             <Typography variant="h6">Session ID: {session_id}</Typography>
             <Typography variant="body1">
-              We have received your payment and you can now access the premium features of Flasher.io!
+              We have received your payment and you can now access the premium features of StudyFlash!
             </Typography>
             <Button
               my={4}
